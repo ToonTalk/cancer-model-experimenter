@@ -4,6 +4,15 @@
 	width: 200px;
 }
 
+.slider-value-display {
+	border: 0; 
+	font-weight: bold;
+}
+
+.slider-panel {
+	margin: 10px;
+}
+
 /** Example rules used by the template application (remove for your app) */
 h1 {
   font-size: 2em;

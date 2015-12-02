@@ -42,28 +42,41 @@
     <h1>Run experiments with the cancer cell model</h1>
     
     <p>Set the following sliders and buttons to specify the parameters of your experiment.</p>
-    <div>
-         <div class="slider" id="the-egf-diffusion-coefficient"></div>
-         <label for="egf-diffusion-coefficient">EGF diffusion coefficient:</label>
-         <input type="text" id="egf-diffusion-coefficient" style="border:0; font-weight:bold;">
-    </div>
+    <div id='sliders'></div>
  
 <script>
-var add_slider = function (label_id, min, max, value) {
+var add_slider = function (label_id, caption, min, max, value) {
+                     var slider_panel  = document.createElement('div');
+                     var slider        = document.createElement('div');
+                     var label         = document.createElement('label');
+                     var value_display = document.createElement('input');
+                     slider_panel.className = "slider-panel";
+                     slider.className = 'slider';
+                     slider.id = 'the-' + label_id;
+                     label.for = slider.id;
+                     label.innerHTML = caption;
+                     value_display.type = 'text';
+                     value_display.id = label_id;
+                     value_display.className = 'slider-value-display';
                      var transform_slider_value = function (slider_value) {
 		                                              var factor = (max-min)/100;
 		                                              return min+factor*slider_value;
 		                                          };
-					 $("#the-" + label_id).slider({step: 1,
-					                               min: 0,
-					                               max: 100,
-					                               value: 100*value/(max-min),
-					                               slide: function(event, ui) {
-					                                          $("#" + label_id).val(transform_slider_value(ui.value).toPrecision(2))
-					                              }});
-					$("#" + label_id).val(value);
+					 $(slider).slider({step: 1,
+					                   min: 0,
+					                   max: 100,
+					                   value: 100*value/(max-min),
+					                   slide: function(event, ui) {
+					                              $(value_display).val(transform_slider_value(ui.value).toPrecision(2))
+					               }});
+					$(value_display).val(value);
+					slider_panel.appendChild(slider);
+					slider_panel.appendChild(label);
+					slider_panel.appendChild(value_display);
+					$("#sliders").append(slider_panel);
 			     };
-add_slider("egf-diffusion-coefficient", 0, 1.0e-13, 2.7E-14);
+add_slider("egf-diffusion-coefficient",    "EGF diffusion coefficient:",    0, 1.0e-13, 2.7E-14);
+add_slider("oxygen-diffusion-coefficient", "Oxygen diffusion coefficient:", 0, 1.0e-8,  1.0E-9);
 
 
 </script>
