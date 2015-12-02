@@ -1,5 +1,7 @@
 package uk.ac.ox.it.cancer_model.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -8,5 +10,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("greet")
 public interface ExperimentService extends RemoteService {
-    String experimentServer(String name) throws IllegalArgumentException;
+    String experimentServer(String email, String[] parameterNames, ArrayList<Double> parameterValues) throws IllegalArgumentException;
 }

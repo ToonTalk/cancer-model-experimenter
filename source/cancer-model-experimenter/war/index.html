@@ -17,7 +17,10 @@
     <!-- Any title is fine                         -->
     <!--                                           -->
     <title>Web Interface for running experiments with the cancer cell model</title>
-    
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+      <style>#slider { margin: 10px; }	</style>
+      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+      <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <!--                                           -->
     <!-- This script loads your compiled module.   -->
     <!-- If you add any GWT meta tags, they must   -->
@@ -38,7 +41,32 @@
 
     <h1>Run experiments with the cancer cell model</h1>
     
-    <p>Sliders and other widgets for specifying the parameters of your experiment will be here.</p>
+    <p>Set the following sliders and buttons to specify the parameters of your experiment.</p>
+    <div>
+         <div class="slider" id="the-egf-diffusion-coefficient"></div>
+         <label for="egf-diffusion-coefficient">EGF diffusion coefficient:</label>
+         <input type="text" id="egf-diffusion-coefficient" style="border:0; font-weight:bold;">
+    </div>
+ 
+<script>
+var add_slider = function (label_id, min, max, value) {
+                     var transform_slider_value = function (slider_value) {
+		                                              var factor = (max-min)/100;
+		                                              return min+factor*slider_value;
+		                                          };
+					 $("#the-" + label_id).slider({step: 1,
+					                               min: 0,
+					                               max: 100,
+					                               value: 100*value/(max-min),
+					                               slide: function(event, ui) {
+					                                          $("#" + label_id).val(transform_slider_value(ui.value).toPrecision(2))
+					                              }});
+					$("#" + label_id).val(value);
+			     };
+add_slider("egf-diffusion-coefficient", 0, 1.0e-13, 2.7E-14);
+
+
+</script>
 
     <table align="center">
       <tr>

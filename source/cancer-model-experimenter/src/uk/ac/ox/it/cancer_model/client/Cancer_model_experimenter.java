@@ -1,5 +1,7 @@
 package uk.ac.ox.it.cancer_model.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -105,13 +107,17 @@ public class Cancer_model_experimenter implements EntryPoint {
 	    private void sendParametersToServer() {
 		// First, we validate the input.
 		errorLabel.setText("");
-		String textToServer = emailField.getText();
-
+		String emailAddress = emailField.getText();
+	        String parameterNames[] = {"egf-diffusion-coefficient"};
+	        ArrayList<Double> parameterValues = new ArrayList<Double>();
+	        for (String name : parameterNames) {
+	            parameterValues.add(JavaScript.sliderValue(name));
+	        };
 		// Then, we send the input to the server.
 		experimentButton.setEnabled(false);
-		textToServerLabel.setText(textToServer);
+		textToServerLabel.setText(emailAddress);
 		serverResponseLabel.setText("");
-		experimentService.experimentServer(textToServer,
+		experimentService.experimentServer(emailAddress, parameterNames, parameterValues,
 		        new AsyncCallback<String>() {
 			    public void onFailure(Throwable caught) {
 			        // Show the RPC error message to the user
