@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# each experiment needs its own directory for input files and modified NLOGO file
+
+mkdir $1
+
+cp cancer/* $1/
+
+mv $1 cancer-outputs/$1
+
+cd cancer-outputs/$1
+
+sbatch --partition=devel cancer_2D.sh
+
+cd ../..
+
+# should delete nlogo, sh, etc files
+
+
+
