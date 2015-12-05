@@ -10,7 +10,11 @@ mv $1 cancer-outputs/$1
 
 cd cancer-outputs/$1
 
-sbatch --partition=devel cancer_2D.sh
+sbatch --partition=devel cancer_2D.sh 
+
+sbatch --partition=devel cancer_2D.sh 
+
+sbatch --partition=devel cancer_2D.sh $2
 
 cd ../..
 

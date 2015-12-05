@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set the number of nodes to 8
+# set the number of nodes to 1
 #SBATCH --nodes=1
 
 # set number of processes 16 per node
@@ -17,7 +17,7 @@
 #SBATCH --mail-type=END
 
 # send mail to the following address
-#SBATCH --mail-user=kenneth.kahn@it.ox.ac.uk
+#SBATCH --mail-user=$1
 
 # start job from the directory it was submitted
 cd $SLURM_SUBMIT_DIR
@@ -32,7 +32,4 @@ netlogo-headless.sh \
 --experiment multiple-runs \
 --threads 16
 
-cat log* > output.txt
-
-rm log*.html
 

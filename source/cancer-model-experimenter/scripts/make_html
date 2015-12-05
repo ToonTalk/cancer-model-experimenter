@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# creates an HTML page from the logs of each replicate
+
+cat prefix.html cancer-outputs/$1/log* postfix.html > cancer-outputs/$1.html
+
+# should delete log*.html, nlogo, sh, etc files when the correct number of log files has been created
+# or each batch job has finished
+
+
+
