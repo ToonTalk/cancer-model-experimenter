@@ -1,6 +1,7 @@
 package uk.ac.ox.it.cancer_model.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -12,6 +13,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -128,7 +131,8 @@ public class Cancer_model_experimenter implements EntryPoint {
 		experimentButton.setEnabled(false);
 		textToServerLabel.setText(emailAddress);
 		serverResponseLabel.setText("");
-		experimentService.experimentServer(emailAddress, parameterNames, parameterValues,
+		String date = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(new Date());
+		experimentService.experimentServer(emailAddress, date, parameterNames, parameterValues,
 		        new AsyncCallback<String>() {
 			    public void onFailure(Throwable caught) {
 			        // Show the RPC error message to the user

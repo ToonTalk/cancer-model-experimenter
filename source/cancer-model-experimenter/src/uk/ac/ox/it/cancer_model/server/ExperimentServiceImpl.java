@@ -16,8 +16,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class ExperimentServiceImpl extends RemoteServiceServlet implements
         ExperimentService {
 
-    public String experimentServer(String email, ArrayList<String> parameterNames, ArrayList<Double> parameterValues) throws IllegalArgumentException {
-	String response = "Click on <a href='https://dl.dropboxusercontent.com/u/51973316/cancer2/output/mutation-50-50x50.html' target='_blank'>this link</a> to see the results of the experiment.";
+    public String experimentServer(String email, String startTime, ArrayList<String> parameterNames, ArrayList<Double> parameterValues) throws IllegalArgumentException {
+	String response = "Click on <a href='https://dl.dropboxusercontent.com/u/51973316/cancer2/output/mutation-50-50x50.html' target='_blank'>this link</a> to see the results of the experiment.<br>";
 	if (email != null && !email.isEmpty()) {
 	    response += " An email will be sent to " + escapeHtml(email) + " when the results are ready."; 
 	}
@@ -25,12 +25,14 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    File tempFile = File.createTempFile("parameters", ".txt");
 	    FileOutputStream stream = new FileOutputStream(tempFile);
 	    for (int i = 0; i < parameterNames.size(); i++) {
-		String setting = "set the-" + parameterNames.get(i) + " = " + parameterValues.get(i) + "\n";
+		String setting = "set the-" + parameterNames.get(i) + " " + parameterValues.get(i) + "\n";
 		stream.write(setting.getBytes());
             }
+	    String timeSetting = "set the-start-time \"" + startTime + "\"\n";
+	    stream.write(timeSetting.getBytes());
 	    stream.close();
 	    tempFile.deleteOnExit();
-	    response += "<br>Parameters: " + tempFile.toString();	    
+//	    response += tempFile.toString();  
         } catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
