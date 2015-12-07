@@ -18,6 +18,10 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -158,5 +162,55 @@ public class Cancer_model_experimenter implements EntryPoint {
 	MyHandler handler = new MyHandler();
 	experimentButton.addClickHandler(handler);
 	emailField.addKeyUpHandler(handler);
+	addFileUploadWidget();
     }
+    
+    public static void addFileUploadWidget() {
+	    // Create a FormPanel and point it at a service.
+	    // based on http://www.gwtproject.org/javadoc/latest/com/google/gwt/user/client/ui/FileUpload.html
+	    final FormPanel form = new FormPanel();
+	    form.setAction(GWT.getModuleBaseURL() + "/uploadFileHandler");
+
+	    // Because we're going to add a FileUpload widget, we'll need to set the
+	    // form to use the POST method, and multipart MIME encoding.
+	    form.setEncoding(FormPanel.ENCODING_MULTIPART);
+	    form.setMethod(FormPanel.METHOD_POST);
+
+	    // Create a panel to hold all of the form widgets.
+	    VerticalPanel panel = new VerticalPanel();
+	    form.setWidget(panel);
+
+	    panel.add(new Label("Use this to upload any customisations of the default settings. Any of mutations.txt, input.txt, or regulatoryGraph.html."));
+
+	    // Create a FileUpload widget.
+	    FileUpload upload = new FileUpload();
+	    upload.setName("uploadFormElement");
+	    panel.add(upload);
+
+	    // Add a 'submit' button.
+	    panel.add(new Button("Submit", new ClickHandler() {
+	      public void onClick(ClickEvent event) {
+	        form.submit();
+	      }
+	    }));
+
+	    // Add an event handler to the form.
+	    form.addSubmitHandler(new FormPanel.SubmitHandler() {
+	      public void onSubmit(SubmitEvent event) {
+	        // This event is fired just before the form is submitted. We can take
+	        // this opportunity to perform validation.
+//		  System.out.println(event);
+	      }
+	    });
+	    form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+	      public void onSubmitComplete(SubmitCompleteEvent event) {
+	        // When the form submission is successfully completed, this event is
+	        // fired. Assuming the service returned a response of type text/html,
+	        // we can get the result text here (see the FormPanel documentation for
+	        // further explanation).
+//	        System.out.println(event);
+	    }});
+
+	    RootPanel.get().add(form);
+	  }
 }

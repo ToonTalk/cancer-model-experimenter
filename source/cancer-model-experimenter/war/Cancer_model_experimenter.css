@@ -1,5 +1,10 @@
 /** Add css rules here for your application. */
 
+body {
+    font-family: "Tahoma", "Trebuchet MS";
+    font-size: 1.1em;
+}
+
 .slider {
 	width: 200px;
 }

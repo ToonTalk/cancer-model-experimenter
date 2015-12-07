@@ -7,18 +7,28 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
+    <servlet-name>experimentServlet</servlet-name>
     <servlet-class>uk.ac.ox.it.cancer_model.server.ExperimentServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/cancer_model_experimenter/greet</url-pattern>
+    <servlet-name>experimentServlet</servlet-name>
+    <url-pattern>/cancer_model_experimenter/experiment</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Cancer_model_experimenter.html</welcome-file>
   </welcome-file-list>
+  
+  <servlet>
+   <servlet-name>UploadServlet</servlet-name>
+   <servlet-class>uk.ac.ox.it.cancer_model.server.UploadServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+   <servlet-name>UploadServlet</servlet-name>
+   <url-pattern>/cancer_model_experimenter//uploadFileHandler</url-pattern>
+</servlet-mapping>
 
 </web-app>

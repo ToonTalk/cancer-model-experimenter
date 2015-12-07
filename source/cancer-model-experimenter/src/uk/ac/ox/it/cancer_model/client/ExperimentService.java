@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * The client-side stub for the RPC service.
  */
-@RemoteServiceRelativePath("greet")
+@RemoteServiceRelativePath("experiment")
 public interface ExperimentService extends RemoteService {
     String experimentServer(String email, String startTime, ArrayList<String> parameterNames, ArrayList<Double> parameterValues) throws IllegalArgumentException;
 }
