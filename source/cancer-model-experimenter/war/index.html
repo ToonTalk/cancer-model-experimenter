@@ -45,7 +45,7 @@
     <div id='sliders'></div>
  
 <script>
-var add_slider = function (label_id, caption, min, max, value) {
+var add_slider = function (label_id, caption, min, max, value, step) {
                      var slider_panel  = document.createElement('div');
                      var slider        = document.createElement('div');
                      var label         = document.createElement('label');
@@ -66,6 +66,7 @@ var add_slider = function (label_id, caption, min, max, value) {
 					                   min: 0,
 					                   max: 100,
 					                   value: 100*value/(max-min),
+					                   step: step && 100*step/(max-min),
 					                   slide: function(event, ui) {
 					                              $(value_display).val(transform_slider_value(ui.value).toPrecision(2))
 					               }});
@@ -75,6 +76,7 @@ var add_slider = function (label_id, caption, min, max, value) {
 					slider_panel.appendChild(value_display);
 					$("#sliders").append(slider_panel);
 			     };
+add_slider("number-of-replicates",         "Number of replicates:",         16, 96, 48, 16);
 add_slider("egf-diffusion-coefficient",    "EGF diffusion coefficient:",    0, 1.0e-13, 2.7E-14);
 add_slider("oxygen-diffusion-coefficient", "Oxygen diffusion coefficient:", 0, 1.0e-8,  1.0E-9);
 

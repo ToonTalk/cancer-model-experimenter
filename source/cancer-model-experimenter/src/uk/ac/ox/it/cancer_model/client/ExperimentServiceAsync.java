@@ -8,6 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>GreetingService</code>.
  */
 public interface ExperimentServiceAsync {
-    void experimentServer(String email, String[] parameterNames, ArrayList<Double> parameterValues, AsyncCallback<String> callback)
+    void experimentServer(String email, ArrayList<String> parameterNames, ArrayList<Double> parameterValues, AsyncCallback<String> callback)
 	    throws IllegalArgumentException;
 }

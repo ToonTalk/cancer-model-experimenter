@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -108,7 +111,15 @@ public class Cancer_model_experimenter implements EntryPoint {
 		// First, we validate the input.
 		errorLabel.setText("");
 		String emailAddress = emailField.getText();
-	        String parameterNames[] = {"egf-diffusion-coefficient"};
+		ArrayList<String> parameterNames = new ArrayList<String>();
+		NodeList<Element> sliders = RootPanel.getBodyElement().getElementsByTagName("input");
+		for (int i = 0; i < sliders.getLength(); i++) {
+		    Node slider = sliders.getItem(i);
+		    String id = ((Element) slider).getId();
+		    if (!id.isEmpty()) {
+			parameterNames.add(id);
+		    }
+		}
 	        ArrayList<Double> parameterValues = new ArrayList<Double>();
 	        for (String name : parameterNames) {
 	            parameterValues.add(JavaScript.sliderValue(name));

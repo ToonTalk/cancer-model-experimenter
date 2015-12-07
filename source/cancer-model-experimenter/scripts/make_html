@@ -4,6 +4,11 @@
 
 cat prefix.html cancer-outputs/$1/log* postfix.html > cancer-outputs/$1.html
 
+count=$(ls cancer-outputs/$1/log* | wc -l)
+
+if [ $count -eq $2 ] ; then echo 'good'; fi
+
+
 # should delete log*.html, nlogo, sh, etc files when the correct number of log files has been created
 # or each batch job has finished
 

@@ -1,5 +1,8 @@
 package uk.ac.ox.it.cancer_model.server;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import uk.ac.ox.it.cancer_model.client.ExperimentService;
@@ -13,14 +16,25 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class ExperimentServiceImpl extends RemoteServiceServlet implements
         ExperimentService {
 
-    public String experimentServer(String email, String[] parameterNames, ArrayList<Double> parameterValues) throws IllegalArgumentException {
+    public String experimentServer(String email, ArrayList<String> parameterNames, ArrayList<Double> parameterValues) throws IllegalArgumentException {
 	String response = "Click on <a href='https://dl.dropboxusercontent.com/u/51973316/cancer2/output/mutation-50-50x50.html' target='_blank'>this link</a> to see the results of the experiment.";
 	if (email != null && !email.isEmpty()) {
 	    response += " An email will be sent to " + escapeHtml(email) + " when the results are ready."; 
 	}
-	for (int i = 0; i < parameterNames.length; i++) {
-	    response += "<br>the-" + parameterNames[i] + " = " + parameterValues.get(i);
-	}
+	try {
+	    File tempFile = File.createTempFile("parameters", ".txt");
+	    FileOutputStream stream = new FileOutputStream(tempFile);
+	    for (int i = 0; i < parameterNames.size(); i++) {
+		String setting = "set the-" + parameterNames.get(i) + " = " + parameterValues.get(i) + "\n";
+		stream.write(setting.getBytes());
+            }
+	    stream.close();
+	    tempFile.deleteOnExit();
+	    response += "<br>Parameters: " + tempFile.toString();	    
+        } catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+        }
 	return response;
     }
 

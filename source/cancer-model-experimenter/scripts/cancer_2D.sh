@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# $1 is the unique name of the experiment
+# $2 is the number of batches (16 replicates each) to run
+# $3 should be either 2D or 3D
+
 # set the number of nodes to 1
 #SBATCH --nodes=1
 
@@ -12,24 +16,21 @@
 # set the name of the job
 #SBATCH --job-name=cancer_model
 
-# mail alerts at beginning and end 
-#SBATCH --mail-type=BEGIN
-#SBATCH --mail-type=END
-
-# send mail to the following address
-#SBATCH --mail-user=$1
-
 # start job from the directory it was submitted
 cd $SLURM_SUBMIT_DIR
 
 # load NetLogo
 module load netlogo
 
-# the model is cancer_2D.nlogo
-
 netlogo-headless.sh \
---model $SLURM_SUBMIT_DIR/cancer_2D.nlogo \
+--model $SLURM_SUBMIT_DIR/cancer_$3.nlogo \
 --experiment multiple-runs \
 --threads 16
 
+cat log* > 16_runs.txt
 
+rm log*
+
+cd ../..
+
+bash make_html.sh $1 $2
