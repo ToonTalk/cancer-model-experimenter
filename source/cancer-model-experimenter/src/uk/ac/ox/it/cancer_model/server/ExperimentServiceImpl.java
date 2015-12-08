@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import uk.ac.ox.it.cancer_model.client.ExperimentService;
 
@@ -39,6 +41,11 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    stream.close();
 	    tempFile.deleteOnExit();
 	    serverFiles.put("parameters.txt", tempFile.toString());
+	    SecureShell secureShell = new SecureShell();
+	    Set<Entry<String, String>> entrySet = serverFiles.entrySet();
+	    for (Entry<String, String> entry: entrySet) {
+		secureShell.uploadFile(entry.getValue(), "/home/donc-onconet/oucs0030/cancer/" + entry.getKey());
+	    }
         } catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
