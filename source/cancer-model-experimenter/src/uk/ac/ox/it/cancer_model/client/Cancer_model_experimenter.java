@@ -2,6 +2,7 @@ package uk.ac.ox.it.cancer_model.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -43,8 +44,13 @@ public class Cancer_model_experimenter implements EntryPoint {
     /**
      * Create a remote service proxy to talk to the server-side Experiment service.
      */
-    private final ExperimentServiceAsync experimentService = GWT
-	    .create(ExperimentService.class);
+    private final ExperimentServiceAsync experimentService = GWT.create(ExperimentService.class);
+    
+    /**
+     * a map from local file to server file names
+     */
+    
+    private static HashMap<String, String> serverFiles = new HashMap<String, String>();
 
     /**
      * This is the entry point method.
@@ -115,11 +121,11 @@ public class Cancer_model_experimenter implements EntryPoint {
 	     * Send the name from the nameField to the server and wait for a response.
 	     */
 	    private void sendParametersToServer() {
-		// First, we validate the input.
 		errorLabel.setText("");
 		String emailAddress = emailField.getText();
 		ArrayList<String> parameterNames = new ArrayList<String>();
 		NodeList<Element> sliders = RootPanel.getBodyElement().getElementsByTagName("input");
+		long numberOfReplicates = 16;
 		for (int i = 0; i < sliders.getLength(); i++) {
 		    Node slider = sliders.getItem(i);
 		    String id = ((Element) slider).getId();
@@ -129,14 +135,23 @@ public class Cancer_model_experimenter implements EntryPoint {
 		}
 	        ArrayList<Double> parameterValues = new ArrayList<Double>();
 	        for (String name : parameterNames) {
-	            parameterValues.add(JavaScript.sliderValue(name));
+	            double sliderValue = JavaScript.sliderValue(name);
+		    parameterValues.add(sliderValue);
+		    if (name.equals("number-of-replicates")) {
+			numberOfReplicates = Math.round(sliderValue);
+		    }
 	        };
 		// Then, we send the input to the server.
 		experimentButton.setEnabled(false);
 		textToServerLabel.setText(emailAddress);
 		serverResponseLabel.setText("");
 		String date = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(new Date());
-		experimentService.experimentServer(emailAddress, date, parameterNames, parameterValues,
+		experimentService.experimentServer(numberOfReplicates,
+			                           emailAddress, 
+			                           date,
+			                           parameterNames,
+			                           parameterValues,
+			                           serverFiles,
 		        new AsyncCallback<String>() {
 			    public void onFailure(Throwable caught) {
 			        // Show the RPC error message to the user
@@ -208,7 +223,9 @@ public class Cancer_model_experimenter implements EntryPoint {
 	        // fired. Assuming the service returned a response of type text/html,
 	        // we can get the result text here (see the FormPanel documentation for
 	        // further explanation).
-//	        System.out.println(event);
+	        String response = event.getResults();
+	        String[] parts = response.split("file-name-token");
+	        serverFiles.put(parts[1], parts[2]);
 	    }});
 
 	    RootPanel.get().add(form);

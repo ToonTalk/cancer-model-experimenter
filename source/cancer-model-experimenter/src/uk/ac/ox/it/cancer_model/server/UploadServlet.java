@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,8 +33,7 @@ public class UploadServlet extends HttpServlet {
      */
     private static final long serialVersionUID = -3538876153792111483L;
     
-    public void doPost(HttpServletRequest request, 
-            HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
            throws ServletException, java.io.IOException {
 	// based on http://stackoverflow.com/questions/2422468/how-to-upload-files-to-server-using-jsp-servlet/2424824#2424824
 	try {
@@ -46,7 +46,6 @@ public class UploadServlet extends HttpServlet {
 	                // ... (do your job here)
 	            } else {
 	                // Process form file field (input type="file").
-//	                String fieldName = item.getFieldName();
 	                String fileName = FilenameUtils.getName(item.getName());
 	                InputStream fileContent = item.getInputStream();
 	                final File tempFile = File.createTempFile(fileName, "");
@@ -54,8 +53,9 @@ public class UploadServlet extends HttpServlet {
 	                try (FileOutputStream out = new FileOutputStream(tempFile)) {
 	                    IOUtils.copy(fileContent, out);
 	                }
-	                // following will be replaced by something that send these files to ARC
-	                System.out.println(tempFile);
+	                ServletOutputStream writer = response.getOutputStream();
+	                // add unique tokens around each file name since this will be wrapped up in minimal HTML
+	                writer.print("file-name-token" + fileName + "file-name-token" + tempFile.toString() + "file-name-token");
 	            }
 	        }
 	    } catch (FileUploadException e) {
