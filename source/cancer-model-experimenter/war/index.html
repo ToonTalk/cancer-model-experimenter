@@ -8,18 +8,16 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
-    <!--                                                               -->
-    <!-- Consider inlining CSS to reduce the number of requested files -->
-    <!--                                                               -->
-    <link type="text/css" rel="stylesheet" href="Cancer_model_experimenter.css">
+   
 
     <!--                                           -->
     <!-- Any title is fine                         -->
     <!--                                           -->
     <title>Web Interface for running experiments with the cancer cell model</title>
+    <!-- Figure out which jquery source is best -- note that version 2 won't work on old browsers -->
       <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
       <style>#slider { margin: 10px; }	</style>
-      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <!--                                           -->
     <!-- This script loads your compiled module.   -->
@@ -27,9 +25,11 @@
     <!-- be added before this line.                -->
     <!--                                           -->
     <script type="text/javascript" src="cancer_model_experimenter/cancer_model_experimenter.nocache.js"></script>
+     <!--                                                               -->
+    
   </head>
 
-  <body>
+  <body class='experimenter-body'>
 
     <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
     <noscript>
@@ -95,5 +95,8 @@ add_slider("oxygen-diffusion-coefficient", "Oxygen diffusion coefficient:", 0, 1
         <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
       </tr>
     </table>
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="Cancer_model_experimenter.css">
   </body>
 </html>

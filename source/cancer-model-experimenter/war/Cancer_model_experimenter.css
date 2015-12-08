@@ -1,8 +1,17 @@
 /** Add css rules here for your application. */
 
-body {
+.experimenter-body {
     font-family: "Tahoma", "Trebuchet MS";
     font-size: 1.1em;
+}
+
+body, table td, select, button, input {
+    font-family: "Tahoma", "Trebuchet MS";
+    font-size: 1.1em;
+}
+
+.gwt-Button {
+	font-size: 1.1em;
 }
 
 .slider {
