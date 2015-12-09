@@ -12,20 +12,23 @@ cd $1
 INDEX=0
 while [ $INDEX -lt $2 ]; do
       mkdir batch_$INDEX
-      cp ../cancer_2D.sh         batch_$INDEX/
-      cp ../cancer_2D.nlogo      batch_$INDEX/
+      cp ../run_cancer_model.sh  batch_$INDEX/
+      cp ../cancer.nlogo         batch_$INDEX/
+      cp ../run_experiment.xml   batch_$INDEX/
       cp ../mutations.txt        batch_$INDEX/
       cp ../input.txt            batch_$INDEX/
+      cp ../parameters.txt       batch_$INDEX/
       cp ../regulatoryGraph.html batch_$INDEX/
       cd batch_$INDEX
-      sbatch --partition=devel cancer_2D.sh $1 $2
+      sbatch --partition=devel run_cancer_model.sh $1 $2
       cd ..
       let INDEX=INDEX+1
     done
 
 cd ..
 
-# should delete nlogo, sh, etc files
+bash restore_from_master.sh
+
 
 
 

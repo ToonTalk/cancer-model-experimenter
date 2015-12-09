@@ -4,22 +4,37 @@
 # $1 is the unique name of the experiment
 # $2 is the number of batches (16 replicates each) to run
 
-pwd
+if [ ! -f ../cancer-outputs/$1.html ] ; then
+   cat prefix.html postfix.html > ../cancer-outputs/$1.html ;
+fi
 
-echo $1
+echo "The following contains any errors encountered. " > /tmp/log_preface
 
-echo $2
+if [ -f $1/*/slurm-*.out ] ; then
+   cat /tmp/log_preface $1/*/slurm-*.out > ../cancer-outputs/$1.log ;
+fi
+
+rm /tmp/log_preface
+
+if [ ! -f ../cancer-outputs/$1.log ] ; then
+   echo "Job is still in the ARC queue and yet to begin." > ../cancer-outputs/$1.log ;
+fi
+
+if [ ! -f $1/*/16_runs.txt ] ; then
+   exit 0 ;
+fi
 
 cat prefix.html $1/*/16_runs.txt postfix.html > ../cancer-outputs/$1.html
 
-cat $1/*/slurm-*.out > ../cancer-outputs/$1.log
-
 count=$(ls $1/*/16_runs.txt | wc -l)
 
-if [ $count -eq $2 ] ; then rm -R $1; fi
+#if last one then delete temporary files
 
-# should delete log*.html, nlogo, sh, etc files when the correct number of log files has been created
-# or each batch job has finished
+if [ $count -eq $2 ] ; then 
+   rm -R $1 ; 
+fi
+
+
 
 
 
