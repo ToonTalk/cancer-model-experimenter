@@ -15,6 +15,7 @@ public interface ExperimentServiceAsync {
 	                  ArrayList<String> parameterNames,
 	                  ArrayList<Double> parameterValues,
 	                  HashMap<String, String> serverFiles,
+	                  String host,
 	                  AsyncCallback<String> callback)
 	    throws IllegalArgumentException;
 }

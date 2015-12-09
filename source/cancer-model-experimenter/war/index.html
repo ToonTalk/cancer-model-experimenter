@@ -45,12 +45,13 @@
     <div id='sliders'></div>
  
 <script>
-var add_slider = function (label_id, caption, min, max, value, step) {
+var add_slider = function (label_id, caption, title, min, max, value, step) {
                      var slider_panel  = document.createElement('div');
                      var slider        = document.createElement('div');
                      var label         = document.createElement('label');
                      var value_display = document.createElement('input');
                      slider_panel.className = "slider-panel";
+                     slider_panel.title = title;
                      slider.className = 'slider';
                      slider.id = 'the-' + label_id;
                      label.for = slider.id;
@@ -65,7 +66,7 @@ var add_slider = function (label_id, caption, min, max, value, step) {
 					 $(slider).slider({step: 1,
 					                   min: 0,
 					                   max: 100,
-					                   value: 100*value/(max-min),
+					                   value: 100*value/(max-min)-min,
 					                   step: step && 100*step/(max-min),
 					                   slide: function(event, ui) {
 					                              $(value_display).val(transform_slider_value(ui.value).toPrecision(2))
@@ -76,9 +77,22 @@ var add_slider = function (label_id, caption, min, max, value, step) {
 					slider_panel.appendChild(value_display);
 					$("#sliders").append(slider_panel);
 			     };
-add_slider("number-of-replicates",         "Number of replicates:",         16, 96, 48, 16);
-add_slider("egf-diffusion-coefficient",    "EGF diffusion coefficient:",    0, 1.0e-13, 2.7E-14);
-add_slider("oxygen-diffusion-coefficient", "Oxygen diffusion coefficient:", 0, 1.0e-8,  1.0E-9);
+add_slider("number-of-replicates",
+           "Number of replicates:", 
+           "Set the number of times this experiment should be run.",       
+           16, 96, 48, 16);
+add_slider("maximum-number-of-ticks",
+           "Maximum number of ticks:",
+           "Set the maximum number of cycles any replicate can run.",
+           100, 10000, 1000, 100);
+add_slider("egf-diffusion-coefficient",
+           "EGF diffusion coefficient:",
+           "Set the EGF diffusion coefficient.", // replace with more useful tip
+           0, 1.0e-13, 2.7E-14);
+add_slider("oxygen-diffusion-coefficient",
+           "Oxygen diffusion coefficient:",
+           "Set the oxygen diffusion coefficient.", // replace with more useful tip
+            0, 1.0e-8,  1.0E-9);
 
 
 </script>

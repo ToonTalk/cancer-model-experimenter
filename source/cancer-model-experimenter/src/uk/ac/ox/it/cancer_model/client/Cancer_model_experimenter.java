@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -146,30 +147,32 @@ public class Cancer_model_experimenter implements EntryPoint {
 		textToServerLabel.setText(emailAddress);
 		serverResponseLabel.setText("");
 		String date = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(new Date());
+		String host = Window.Location.getHost();
 		experimentService.experimentServer(numberOfReplicates,
 			                           emailAddress, 
 			                           date,
 			                           parameterNames,
 			                           parameterValues,
 			                           serverFiles,
-		        new AsyncCallback<String>() {
-			    public void onFailure(Throwable caught) {
-			        // Show the RPC error message to the user
-			        dialogBox.setText("Failure to communicate with server");
-			        serverResponseLabel.addStyleName("serverResponseLabelError");
-			        serverResponseLabel.setHTML(SERVER_ERROR);
-			        dialogBox.center();
-			        closeButton.setFocus(true);
-			    }
+			                           host,
+			                           new AsyncCallback<String>() {
+		    public void onFailure(Throwable caught) {
+			// Show the RPC error message to the user
+			dialogBox.setText("Failure to communicate with server");
+			serverResponseLabel.addStyleName("serverResponseLabelError");
+			serverResponseLabel.setHTML(SERVER_ERROR);
+			dialogBox.center();
+			closeButton.setFocus(true);
+		    }
 
-			    public void onSuccess(String result) {
-			        dialogBox.setText("Server replied");
-			        serverResponseLabel.removeStyleName("serverResponseLabelError");
-			        serverResponseLabel.setHTML(result);
-			        dialogBox.center();
-			        closeButton.setFocus(true);
-			    }
-		        });
+		    public void onSuccess(String result) {
+			dialogBox.setText("Server replied");
+			serverResponseLabel.removeStyleName("serverResponseLabelError");
+			serverResponseLabel.setHTML(result);
+			dialogBox.center();
+			closeButton.setFocus(true);
+		    }
+		});
 	    }
 	}
 

@@ -19,3 +19,4 @@ local.properties
 source/cancer-model-experimenter/gwt-unitCache/
 
 *.rpc
+source/cancer-model-experimenter/war/config.properties

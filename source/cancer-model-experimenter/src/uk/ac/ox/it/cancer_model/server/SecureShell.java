@@ -4,12 +4,16 @@
 package uk.ac.ox.it.cancer_model.server;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
+
 import org.apache.commons.io.IOUtils;
 
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 /**
@@ -29,17 +33,23 @@ public class SecureShell {
     public SecureShell() {
 	sshClient = new JSch();
 	// only for public key authentication
-
 	try {
 //	    sshClient.addIdentity("location to private key file");
 	    session = sshClient.getSession("oucs0030", "arcus-b.arc.ox.ac.uk");
 	    java.util.Properties config=new java.util.Properties();
 	    config.put("StrictHostKeyChecking", "no");
 	    session.setConfig(config);
-            // only for password authentication
-	    session.setPassword(""); // replace with https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html
+            // the source code cannot contain the password so store it locally (for now)
+	    Properties properties = new Properties();
+//	    properties.setProperty("password", "");
+//	    FileOutputStream output = new FileOutputStream("config.properties");
+//	    properties.store(output, null);
+	    FileInputStream input = new FileInputStream("config.properties");
+	    properties.load(input);
+	    String password = properties.getProperty("password");
+	    session.setPassword(password);
 	    session.connect();
-        } catch (JSchException e) {
+        } catch (Exception e) {
 	    e.printStackTrace();
         }
     }
@@ -47,18 +57,75 @@ public class SecureShell {
     public void uploadFile(String localPath, String remotePath) {
 	ChannelSftp sftpChannel = null;
 	try {
-	  sftpChannel = (ChannelSftp) session.openChannel("sftp");
-	  sftpChannel.connect();
-	  OutputStream outputStream = sftpChannel.put(remotePath);
-	  FileInputStream fileInputStream = new FileInputStream(localPath);
-	  IOUtils.copy(fileInputStream, outputStream);
+	    sftpChannel = (ChannelSftp) session.openChannel("sftp");
+	    sftpChannel.connect();
+	    OutputStream outputStream = sftpChannel.put(remotePath);
+	    FileInputStream fileInputStream = new FileInputStream(localPath);
+	    IOUtils.copy(fileInputStream, outputStream);
+	} catch (Exception e) {
+	    System.err.println("Trying to copy " + localPath + " to " + remotePath);
+	    e.printStackTrace();
+	} finally {
+	    if (sftpChannel != null) {
+		sftpChannel.disconnect();
+	    }
+	}
+    }
+    
+    public void downloadFile(String localPath, String remotePath) {
+	ChannelSftp sftpChannel = null;
+	try {
+	    sftpChannel = (ChannelSftp) session.openChannel("sftp");
+	    sftpChannel.connect();
+	    InputStream inputStream = sftpChannel.get(remotePath);
+	    FileOutputStream fileOutputStream = new FileOutputStream(localPath);
+	    IOUtils.copy(inputStream, fileOutputStream);
+	} catch (Exception e) {
+	    System.err.println("Trying to copy " + remotePath + " to " + localPath);
+	    e.printStackTrace();
+	} finally {
+	    if (sftpChannel != null) {
+		sftpChannel.disconnect();
+	    }
+	}
+    }
+    
+    public boolean copyRemoteFile(String remotePath, OutputStream outputStream) {
+	ChannelSftp sftpChannel = null;
+	try {
+	    sftpChannel = (ChannelSftp) session.openChannel("sftp");
+	    sftpChannel.connect();
+	    InputStream inputStream = sftpChannel.get(remotePath);
+	    IOUtils.copy(inputStream, outputStream);
+	    return true;
+	} catch (Exception e) {
+	    System.err.println("Trying to copy " + remotePath + " to an output stream.");
+	    e.printStackTrace();
+	} finally {
+	    if (sftpChannel != null) {
+		sftpChannel.disconnect();
+	    }
+	}
+	return false;
+    }
+    
+    public void execute(String command) {
+	ChannelExec execChannel = null;
+	try {
+	    execChannel = (ChannelExec) session.openChannel("exec");
+	    execChannel.setCommand(command);
+	    execChannel.connect();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {
-	  if (sftpChannel != null) {
-	    sftpChannel.disconnect();
-	  }
+	    if (execChannel != null) {
+		execChannel.disconnect();
+	    }
 	}
+    }
+
+    public void close() {
+	session.disconnect();
     }
 
 }

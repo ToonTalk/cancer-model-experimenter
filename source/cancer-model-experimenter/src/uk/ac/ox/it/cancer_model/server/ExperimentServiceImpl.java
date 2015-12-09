@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import uk.ac.ox.it.cancer_model.client.ExperimentService;
 
@@ -24,11 +25,15 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	                           String startTime,
 	                           ArrayList<String> parameterNames,
 	                           ArrayList<Double> parameterValues,
-	                           HashMap<String, String> serverFiles) throws IllegalArgumentException {
-	String response = "Click on <a href='https://dl.dropboxusercontent.com/u/51973316/cancer2/output/mutation-50-50x50.html' target='_blank'>this link</a> to see the results of the experiment.<br>";
+	                           HashMap<String, String> serverFiles,
+	                           String host) throws IllegalArgumentException {
+	String uuid = UUID.randomUUID().toString();
+	String url = "http://" + host + "/run/" + numberOfReplicates/16 + "batches-" + uuid + ".html";
+	String response = "Click on <a href='" + url + "' target='_blank'>this link</a> to see the results of the experiment.<br>";
 	if (email != null && !email.isEmpty()) {
 	    response += " An email will be sent to " + escapeHtml(email) + " when the results are ready."; 
 	}
+	SecureShell secureShell = null;
 	try {
 	    File tempFile = File.createTempFile("parameters", ".txt");
 	    FileOutputStream stream = new FileOutputStream(tempFile);
@@ -41,14 +46,22 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    stream.close();
 	    tempFile.deleteOnExit();
 	    serverFiles.put("parameters.txt", tempFile.toString());
-	    SecureShell secureShell = new SecureShell();
+	    secureShell = new SecureShell();
+	    // need to wait until the following finishes before doing the rest
+//	    secureShell.execute("cd ~/cancer/ && bash restore_from_master.sh");
 	    Set<Entry<String, String>> entrySet = serverFiles.entrySet();
 	    for (Entry<String, String> entry: entrySet) {
 		secureShell.uploadFile(entry.getValue(), "/home/donc-onconet/oucs0030/cancer/" + entry.getKey());
 	    }
+	    
+	    String command = "cd ~/cancer/ && bash experiment.sh " + uuid + " " + numberOfReplicates/16;
+	    secureShell.execute(command);
         } catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
+        } finally {
+            if (secureShell != null) {
+        	secureShell.close();
+            }
         }
 	return response;
     }

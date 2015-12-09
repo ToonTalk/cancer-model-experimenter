@@ -16,5 +16,6 @@ public interface ExperimentService extends RemoteService {
 	                    String startTime,
 	                    ArrayList<String> parameterNames,
 	                    ArrayList<Double> parameterValues,
-	                    HashMap<String, String> serverFiles) throws IllegalArgumentException;
+	                    HashMap<String, String> serverFiles,
+	                    String host) throws IllegalArgumentException;
 }

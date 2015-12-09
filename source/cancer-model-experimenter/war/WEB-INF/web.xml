@@ -31,4 +31,13 @@
    <url-pattern>/cancer_model_experimenter//uploadFileHandler</url-pattern>
 </servlet-mapping>
 
+<servlet>
+		<servlet-name>StaticPage</servlet-name>
+		<servlet-class>uk.ac.ox.it.cancer_model.server.StaticPageServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+		<servlet-name>StaticPage</servlet-name>
+		<url-pattern>/run/*</url-pattern>
+</servlet-mapping>
+
 </web-app>
