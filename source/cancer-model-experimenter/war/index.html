@@ -1,14 +1,7 @@
 <!doctype html>
-<!-- The DOCTYPE declaration above will set the     -->
-<!-- browser's rendering engine into                -->
-<!-- "Standards Mode". Replacing this declaration   -->
-<!-- with a "Quirks Mode" doctype is not supported. -->
-
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-
-   
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">  
 
     <!--                                           -->
     <!-- Any title is fine                         -->
@@ -41,7 +34,7 @@
 
     <h1>Run experiments with the cancer cell model</h1>
     
-    <p>Set the following sliders and buttons to specify the parameters of your experiment.</p>
+    <p>Set the following sliders and buttons to specify the parameters of your experiment. See <a href='run/documentation.html' target='_blank'>the documentation</a>.</p>
     <div id='sliders'></div>
  
 <script>
@@ -51,7 +44,7 @@ var add_slider = function (label_id, caption, title, min, max, value, step) {
                      var label         = document.createElement('label');
                      var value_display = document.createElement('input');
                      slider_panel.className = "slider-panel";
-                     slider_panel.title = title;
+                     slider.title = title;
                      slider.className = 'slider';
                      slider.id = 'the-' + label_id;
                      label.for = slider.id;
