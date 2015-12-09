@@ -54,12 +54,7 @@ public class StaticPageServlet extends HttpServlet {
 	    
 	    String command = "cd ~/cancer/ && bash make_html.sh " + uuid + " " + numberOfBatches;
 	    secureShell.execute(command);
-	    try {
-		Thread.sleep(1000); // for now
-		secureShell.copyRemoteFile(remoteFileName, outputStream);
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
+	    secureShell.copyRemoteFile(remoteFileName, outputStream);
 	} else {
 	    // is some auxiliary file such as CSS or JS
 	    secureShell.copyRemoteFile("/home/donc-onconet/oucs0030/cancer-outputs" + pathInfo, outputStream);

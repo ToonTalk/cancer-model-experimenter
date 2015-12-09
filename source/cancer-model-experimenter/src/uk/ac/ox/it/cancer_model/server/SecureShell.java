@@ -109,12 +109,16 @@ public class SecureShell {
 	return false;
     }
     
-    public void execute(String command) {
+    public String execute(String command) {
 	ChannelExec execChannel = null;
 	try {
 	    execChannel = (ChannelExec) session.openChannel("exec");
 	    execChannel.setCommand(command);
+	    InputStream outputFromShell = execChannel.getInputStream();
 	    execChannel.connect();
+	    String response = new String(IOUtils.toCharArray(outputFromShell));
+	    System.out.println("Command: " + command + "; response: " + response); // while debugging
+	    return response;
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {
@@ -122,6 +126,7 @@ public class SecureShell {
 		execChannel.disconnect();
 	    }
 	}
+	return null;
     }
 
     public void close() {
