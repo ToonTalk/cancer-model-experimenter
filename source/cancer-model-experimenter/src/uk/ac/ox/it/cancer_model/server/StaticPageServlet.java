@@ -54,7 +54,10 @@ public class StaticPageServlet extends HttpServlet {
 	    
 	    String command = "cd ~/cancer/ && bash make_html.sh " + uuid + " " + numberOfBatches;
 	    secureShell.execute(command);
-	    secureShell.copyRemoteFile(remoteFileName, outputStream);
+	    if (!secureShell.copyRemoteFile(remoteFileName, outputStream) && extension.equals("log")) {
+		// log file hasn't been created yet
+		outputStream.print("Job is still in the ARC queue and yet to begin. Try again later.");
+	    }
 	} else {
 	    // is some auxiliary file such as CSS or JS
 	    secureShell.copyRemoteFile("/home/donc-onconet/oucs0030/cancer-outputs" + pathInfo, outputStream);

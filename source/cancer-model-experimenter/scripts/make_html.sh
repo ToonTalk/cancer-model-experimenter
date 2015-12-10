@@ -16,10 +16,6 @@ fi
 
 rm /tmp/log_preface
 
-if [ ! -f ../cancer-outputs/$1.log ] ; then
-   echo "Job is still in the ARC queue and yet to begin." > ../cancer-outputs/$1.log ;
-fi
-
 if [ ! -f $1/*/16_runs.txt ] ; then
    exit 0 ;
 fi
