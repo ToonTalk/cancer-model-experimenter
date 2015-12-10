@@ -38,23 +38,31 @@
     <div id='sliders'></div>
  
 <script>
-var add_slider = function (label_id, caption, title, min, max, value, step) {
+var add_slider = function (label_id, caption, title, min, max, value, step, integer_value, units) {
                      var slider_panel  = document.createElement('div');
                      var slider        = document.createElement('div');
                      var label         = document.createElement('label');
                      var value_display = document.createElement('input');
+                     if (units === undefined) {
+                        units = "";
+                     } else {
+                       units = " " + units;
+                     }
                      slider_panel.className = "slider-panel";
                      slider.title = title;
                      slider.className = 'slider';
-                     slider.id = 'the-' + label_id;
+                     slider.id = label_id;
                      label.for = slider.id;
                      label.innerHTML = caption;
                      value_display.type = 'text';
-                     value_display.id = label_id;
                      value_display.className = 'slider-value-display';
                      var transform_slider_value = function (slider_value) {
 		                                              var factor = (max-min)/100;
-		                                              return min+factor*slider_value;
+		                                              var value = min+factor*slider_value;
+		                                              if (integer_value) {
+		                                                 return Math.round(value);
+		                                              };
+		                                              return value.toPrecision(2);
 		                                          };
 					 $(slider).slider({step: 1,
 					                   min: 0,
@@ -62,40 +70,82 @@ var add_slider = function (label_id, caption, title, min, max, value, step) {
 					                   value: 100*value/(max-min)-min,
 					                   step: step && 100*step/(max-min),
 					                   slide: function(event, ui) {
-					                              $(value_display).val(transform_slider_value(ui.value).toPrecision(2))
+					                              $(value_display).val(" " + transform_slider_value(ui.value) + units)
 					               }});
-					$(value_display).val(value);
+					$(value_display).val(" " + value + units);
 					slider_panel.appendChild(slider);
 					slider_panel.appendChild(label);
 					slider_panel.appendChild(value_display);
 					$("#sliders").append(slider_panel);
 			     };
-add_slider("number-of-replicates",
+add_slider("the-number-of-replicates",
            "Number of replicates:", 
            "Set the number of times this experiment should be run.",       
-           16, 96, 48, 16);
-add_slider("maximum-number-of-ticks",
+           16, 96, 48, 16, true);
+add_slider("the-maximum-number-of-ticks",
            "Maximum number of ticks:",
            "Set the maximum number of cycles any replicate can run.",
-           100, 10000, 1000, 100);
-add_slider("egf-diffusion-coefficient",
+           100, 10000, 1000, 100, true);
+add_slider("the-maximum-cell-count",
+           "Maximum number of cells:",
+           "Set the maximum number of cells before the simulation stops. Large values may cause the simulation to run too slowly.",
+           100, 1000, 300, 1, true);      
+add_slider("the-initial-cell-count",
+           "Initial number of cells:",
+           "Set the number of cells at the start of the simulation.",
+           1, 100, 50, 1, true);           
+add_slider("the-egf-diffusion-coefficient",
            "EGF diffusion coefficient:",
            "Set the EGF diffusion coefficient.", // replace with more useful tip
-           0, 1.0e-13, 2.7E-14);
-add_slider("oxygen-diffusion-coefficient",
+           0, 1.0e-13, 2.7E-14, 1.0e-15, false, "m^3/s");
+add_slider("the-oxygen-diffusion-coefficient",
            "Oxygen diffusion coefficient:",
            "Set the oxygen diffusion coefficient.", // replace with more useful tip
-            0, 1.0e-8,  1.0E-9);
-
-
+            0, 1.0e-8,  1.0E-9, 1.0e-10, false, "m^3/s");         
+add_slider("the-boundary-oxygen",
+           "Boundary oxygen:",
+           "Set the boundary oxygen.", // replace with more useful tip
+           1, 100, 50, 1, true, "mM");  
+add_slider("the-initial-oxygen",
+           "Initial oxygen:",
+           "Set the initial oxygen.", // replace with more useful tip
+           0, .5, .08, .01, false, "mM");
+add_slider("Oxygen-consumption-rate",
+           "Oxygen consumption rate:",
+           "Set the oxygen consumption rate.", // replace with more useful tip
+           0, 1.0e-3, 5.0E-4, 1.0e-5, false, "mM/sec");
+add_slider("Oxygen_supply-activation-threshold",
+           "Oxygen supply activation threshold:",
+           "Set the oxygen supply activation threshold.", // replace with more useful tip
+           0, .5, .08, .01, false, "mM");
+ add_slider("EGFR_stimulus-activation-threshold",
+           "EGFR stimulus activation threshold:",
+           "Set the EGFR stimulus activation threshold.", // replace with more useful tip
+           0, 1, .01, .01, false);
+ add_slider("EGF-consumption-rate",
+           "EGF consumption rate:",
+           "Set the EGF consumption rate.", // replace with more useful tip
+           0, 1, .01, .01, false);
+ add_slider("EGF-production-rate",
+           "EGF production rate:",
+           "Set the EGF production rate.", // replace with more useful tip
+           0, 1, 1, .01, false); 
+add_slider("the-boundary-EGF",
+           "Boundary EGF:",
+           "Set the boundary EGF.", // replace with more useful tip
+           0, 1, 0, .01, false); 
+ add_slider("the-initial-egf",
+           "Initial EGF:",
+           "Set the initial EGF.", // replace with more useful tip
+           0, 1, 0, .01, false);          
 </script>
 
-    <table align="center">
+    <table id='run-experiment-panel'>
       <tr>
-        <td colspan="2" style="font-weight:bold;">If you wish to be notified when the results are ready please enter your email:</td>        
-      </tr>
-      <tr>
+        <td colspan="2"">If you wish to be notified when the results are ready please enter your email:</td>        
         <td id="emailFieldContainer"></td>
+        </tr>
+        </tr>
         <td id="experimentButtonContainer"></td>
       </tr>
       <tr>

@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -25,6 +26,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -57,7 +59,8 @@ public class Cancer_model_experimenter implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
-	final Button experimentButton = new Button("Run experiment");
+	final Button experimentButton = new Button("<b>Run experiment</b>");
+	experimentButton.setTitle("Click this when all the parameters have been set.");
 	final TextBox emailField = new TextBox();
 	emailField.setTitle("Enter your email address if you wish to be notified when the results are ready.");
 	final Label errorLabel = new Label();
@@ -197,20 +200,26 @@ public class Cancer_model_experimenter implements EntryPoint {
 	    // Create a panel to hold all of the form widgets.
 	    VerticalPanel panel = new VerticalPanel();
 	    form.setWidget(panel);
+	    panel.setSpacing(10);
 
 	    panel.add(new Label("Use this to upload any customisations of the default settings. Any of mutations.txt, input.txt, or regulatoryGraph.html."));
-
+	    HorizontalPanel chooseFilePanel = new HorizontalPanel();
+	    
 	    // Create a FileUpload widget.
 	    FileUpload upload = new FileUpload();
 	    upload.setName("uploadFormElement");
-	    panel.add(upload);
+	    chooseFilePanel.add(upload);
 
 	    // Add a 'submit' button.
-	    panel.add(new Button("Submit", new ClickHandler() {
+	    Button submitFileButton = new Button("<b>Submit file</b>", new ClickHandler() {
 	      public void onClick(ClickEvent event) {
 	        form.submit();
 	      }
-	    }));
+	    });
+	    submitFileButton.setTitle("Click this after choosing one of these files mutations.txt, input.txt, or regulatoryGraph.html");
+	    chooseFilePanel.add(submitFileButton);
+	    
+	    panel.add(chooseFilePanel);
 
 	    // Add an event handler to the form.
 	    form.addSubmitHandler(new FormPanel.SubmitHandler() {
@@ -230,7 +239,7 @@ public class Cancer_model_experimenter implements EntryPoint {
 	        String[] parts = response.split("file-name-token");
 	        serverFiles.put(parts[1], parts[2]);
 	    }});
-
-	    RootPanel.get().add(form);
+            com.google.gwt.user.client.Element runExperimentPanel = DOM.getElementById("run-experiment-panel");
+            runExperimentPanel.getParentElement().insertBefore(form.getElement(), runExperimentPanel);
 	  }
 }
