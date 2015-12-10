@@ -4,7 +4,6 @@
 package uk.ac.ox.it.cancer_model.server;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
@@ -72,23 +71,23 @@ public class SecureShell {
 	}
     }
     
-    public void downloadFile(String localPath, String remotePath) {
-	ChannelSftp sftpChannel = null;
-	try {
-	    sftpChannel = (ChannelSftp) session.openChannel("sftp");
-	    sftpChannel.connect();
-	    InputStream inputStream = sftpChannel.get(remotePath);
-	    FileOutputStream fileOutputStream = new FileOutputStream(localPath);
-	    IOUtils.copy(inputStream, fileOutputStream);
-	} catch (Exception e) {
-	    System.err.println("Trying to copy " + remotePath + " to " + localPath);
-	    e.printStackTrace();
-	} finally {
-	    if (sftpChannel != null) {
-		sftpChannel.disconnect();
-	    }
-	}
-    }
+//    public void downloadFile(String localPath, String remotePath) {
+//	ChannelSftp sftpChannel = null;
+//	try {
+//	    sftpChannel = (ChannelSftp) session.openChannel("sftp");
+//	    sftpChannel.connect();
+//	    InputStream inputStream = sftpChannel.get(remotePath);
+//	    FileOutputStream fileOutputStream = new FileOutputStream(localPath);
+//	    IOUtils.copy(inputStream, fileOutputStream);
+//	} catch (Exception e) {
+//	    System.err.println("Trying to copy " + remotePath + " to " + localPath);
+//	    e.printStackTrace();
+//	} finally {
+//	    if (sftpChannel != null) {
+//		sftpChannel.disconnect();
+//	    }
+//	}
+//    }
     
     public boolean copyRemoteFile(String remotePath, OutputStream outputStream) {
 	ChannelSftp sftpChannel = null;

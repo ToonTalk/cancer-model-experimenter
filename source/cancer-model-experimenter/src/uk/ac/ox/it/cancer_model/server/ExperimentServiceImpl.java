@@ -52,8 +52,7 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    Set<Entry<String, String>> entrySet = serverFiles.entrySet();
 	    for (Entry<String, String> entry: entrySet) {
 		secureShell.uploadFile(entry.getValue(), "/home/donc-onconet/oucs0030/cancer/" + entry.getKey());
-	    }
-	    
+	    }    
 	    String command = "cd ~/cancer/ && bash experiment.sh " + uuid + " " + numberOfReplicates/16;
 	    secureShell.execute(command);
         } catch (IOException e) {

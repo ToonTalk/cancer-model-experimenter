@@ -52,6 +52,8 @@ public class UploadServlet extends HttpServlet {
 	                tempFile.deleteOnExit();
 	                try (FileOutputStream out = new FileOutputStream(tempFile)) {
 	                    IOUtils.copy(fileContent, out);
+	                } catch (Exception e) {
+	                    e.printStackTrace();
 	                }
 	                ServletOutputStream writer = response.getOutputStream();
 	                // add unique tokens around each file name since this will be wrapped up in minimal HTML
