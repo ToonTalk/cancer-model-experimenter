@@ -141,7 +141,7 @@ public class Cancer_model_experimenter implements EntryPoint {
 	        for (String name : parameterNames) {
 	            double sliderValue = JavaScript.sliderValue(name);
 		    parameterValues.add(sliderValue);
-		    if (name.equals("number-of-replicates")) {
+		    if (name.equals("the-number-of-replicates")) {
 			numberOfReplicates = Math.round(sliderValue);
 		    }
 	        };

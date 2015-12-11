@@ -34,12 +34,18 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    response += " An email will be sent to " + escapeHtml(email) + " when the results are ready."; 
 	}
 	SecureShell secureShell = null;
+	String experimentScriptFileName = "experiment.sh";
 	try {
 	    File tempFile = File.createTempFile("parameters", ".txt");
 	    FileOutputStream stream = new FileOutputStream(tempFile);
 	    for (int i = 0; i < parameterNames.size(); i++) {
-		String setting = "set the-" + parameterNames.get(i) + " " + parameterValues.get(i) + "\n";
+		String name = parameterNames.get(i);
+		Double value = parameterValues.get(i);
+		String setting = "set " + name + " " + value + "\n";
 		stream.write(setting.getBytes());
+		if (name.equals("the-maximum-number-of-ticks") && value <= 200) {
+		    experimentScriptFileName = "experiment_dev.sh";
+		}
             }
 	    String timeSetting = "set the-start-time \"" + startTime + "\"\n";
 	    stream.write(timeSetting.getBytes());
@@ -53,7 +59,7 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    for (Entry<String, String> entry: entrySet) {
 		secureShell.uploadFile(entry.getValue(), "/home/donc-onconet/oucs0030/cancer/" + entry.getKey());
 	    }    
-	    String command = "cd ~/cancer/ && bash experiment.sh " + uuid + " " + numberOfReplicates/16;
+	    String command = "cd ~/cancer/ && bash " + experimentScriptFileName + " " + uuid + " " + numberOfReplicates/16;
 	    secureShell.execute(command);
         } catch (IOException e) {
 	    e.printStackTrace();
