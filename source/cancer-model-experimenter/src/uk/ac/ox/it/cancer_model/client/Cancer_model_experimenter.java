@@ -16,10 +16,10 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -54,6 +54,8 @@ public class Cancer_model_experimenter implements EntryPoint {
      */
     
     private static HashMap<String, String> serverFiles = new HashMap<String, String>();
+    
+    private static boolean run3D = false;
 
     /**
      * This is the entry point method.
@@ -133,7 +135,7 @@ public class Cancer_model_experimenter implements EntryPoint {
 		for (int i = 0; i < sliders.getLength(); i++) {
 		    Node slider = sliders.getItem(i);
 		    String id = ((Element) slider).getId();
-		    if (!id.isEmpty()) {
+		    if (!id.isEmpty() && !id.startsWith("gwt")) {
 			parameterNames.add(id);
 		    }
 		}
@@ -157,6 +159,7 @@ public class Cancer_model_experimenter implements EntryPoint {
 			                           parameterNames,
 			                           parameterValues,
 			                           serverFiles,
+			                           run3D,
 			                           host,
 			                           new AsyncCallback<String>() {
 		    public void onFailure(Throwable caught) {
@@ -187,59 +190,76 @@ public class Cancer_model_experimenter implements EntryPoint {
     }
     
     public static void addFileUploadWidget() {
-	    // Create a FormPanel and point it at a service.
-	    // based on http://www.gwtproject.org/javadoc/latest/com/google/gwt/user/client/ui/FileUpload.html
-	    final FormPanel form = new FormPanel();
-	    form.setAction(GWT.getModuleBaseURL() + "/uploadFileHandler");
+	// Create a FormPanel and point it at a service.
+	// based on http://www.gwtproject.org/javadoc/latest/com/google/gwt/user/client/ui/FileUpload.html
+	final FormPanel form = new FormPanel();
+	form.setAction(GWT.getModuleBaseURL() + "/uploadFileHandler");
 
-	    // Because we're going to add a FileUpload widget, we'll need to set the
-	    // form to use the POST method, and multipart MIME encoding.
-	    form.setEncoding(FormPanel.ENCODING_MULTIPART);
-	    form.setMethod(FormPanel.METHOD_POST);
+	// Because we're going to add a FileUpload widget, we'll need to set the
+	// form to use the POST method, and multipart MIME encoding.
+	form.setEncoding(FormPanel.ENCODING_MULTIPART);
+	form.setMethod(FormPanel.METHOD_POST);
 
-	    // Create a panel to hold all of the form widgets.
-	    VerticalPanel panel = new VerticalPanel();
-	    HorizontalPanel chooseFilePanel = new HorizontalPanel();
-	    form.setWidget(panel);
-	    panel.setSpacing(10);
+	// Create a panel to hold all of the form widgets.
+	VerticalPanel panel = new VerticalPanel();
+	HorizontalPanel chooseFilePanel = new HorizontalPanel();
+	form.setWidget(panel);
+	panel.setSpacing(10);
 
-	    panel.add(new Label("Use this to upload any customisations of the default settings. Any of mutations.txt, input.txt, or regulatoryGraph.html."));
-	    
-	    // Create a FileUpload widget.
-	    FileUpload upload = new FileUpload();
-	    upload.setName("uploadFormElement");
-	    chooseFilePanel.add(upload);
+	panel.add(new Label("Use this to upload any customisations of the default settings. Any of mutations.txt, input.txt, or regulatoryGraph.html."));
 
-	    // Add a 'submit' button.
-	    Button submitFileButton = new Button("<b>Submit file</b>", new ClickHandler() {
-		public void onClick(ClickEvent event) {
-		    form.submit();
+	// Create a FileUpload widget.
+	FileUpload upload = new FileUpload();
+	upload.setName("uploadFormElement");
+	chooseFilePanel.add(upload);
+
+	// Add a 'submit' button.
+	Button submitFileButton = new Button("<b>Upload file</b>", new ClickHandler() {
+	    public void onClick(ClickEvent event) {
+		form.submit();
+	    }
+	});
+	submitFileButton.setTitle("Click this after choosing one of these files mutations.txt, input.txt, or regulatoryGraph.html");
+	chooseFilePanel.add(submitFileButton);
+	final HTML submittedFileLabel = new HTML("");
+	chooseFilePanel.add(submittedFileLabel);
+	panel.add(chooseFilePanel);
+	// Add an event handler to the form.
+	form.addSubmitHandler(new FormPanel.SubmitHandler() {
+	    public void onSubmit(SubmitEvent event) {
+		// This event is fired just before the form is submitted. We can take
+		// this opportunity to perform validation.
+		//		  System.out.println(event);
+	    }
+	});
+	form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+	    public void onSubmitComplete(SubmitCompleteEvent event) {
+		// When the form submission is successfully completed, this event is
+		// fired. Assuming the service returned a response of type text/html,
+		// we can get the result text here (see the FormPanel documentation for
+		// further explanation).
+		String response = event.getResults();
+		if (!response.isEmpty()) {
+		    String[] parts = response.split("file-name-token");
+		    if (parts.length < 3) {
+			submittedFileLabel.setHTML(response);
+		    } else {
+			serverFiles.put(parts[1], parts[2]);
+			submittedFileLabel.setHTML("&nbsp;" + parts[1] + " uploaded.");
+		    }
 		}
-	    });
-	    submitFileButton.setTitle("Click this after choosing one of these files mutations.txt, input.txt, or regulatoryGraph.html");
-	    chooseFilePanel.add(submitFileButton);
-	    final HTML submittedFileLabel = new HTML("");
-	    chooseFilePanel.add(submittedFileLabel);
-	    panel.add(chooseFilePanel);
-	    // Add an event handler to the form.
-	    form.addSubmitHandler(new FormPanel.SubmitHandler() {
-	      public void onSubmit(SubmitEvent event) {
-	        // This event is fired just before the form is submitted. We can take
-	        // this opportunity to perform validation.
-//		  System.out.println(event);
-	      }
-	    });
-	    form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-	      public void onSubmitComplete(SubmitCompleteEvent event) {
-	        // When the form submission is successfully completed, this event is
-	        // fired. Assuming the service returned a response of type text/html,
-	        // we can get the result text here (see the FormPanel documentation for
-	        // further explanation).
-	        String response = event.getResults();
-	        String[] parts = response.split("file-name-token");
-	        serverFiles.put(parts[1], parts[2]);
-	        submittedFileLabel.setHTML("&nbsp;" + parts[1] + " uploaded.");
 	    }});
-            RootPanel.get("run-experiment-panel").add(form);
-	  }
+	final CheckBox checkBox3D = new CheckBox("Check this if you wish to run the model with a three dimensional array of cells.");
+	ClickHandler checkBox3DHandler = new ClickHandler() {
+
+	    @Override
+            public void onClick(ClickEvent event) {
+		run3D = checkBox3D.getValue();        
+            }
+	    
+	};
+	checkBox3D.addClickHandler(checkBox3DHandler );
+	RootPanel.get("run-experiment-panel").add(checkBox3D);
+	RootPanel.get("run-experiment-panel").add(form);
+    }
 }

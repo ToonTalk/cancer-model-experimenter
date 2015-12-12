@@ -26,6 +26,7 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	                           ArrayList<String> parameterNames,
 	                           ArrayList<Double> parameterValues,
 	                           HashMap<String, String> serverFiles,
+	                           boolean run3d,
 	                           String host) throws IllegalArgumentException {
 	String uuid = UUID.randomUUID().toString();
 	String url = "http://" + host + "/run/" + numberOfReplicates/16 + "batches-" + uuid + ".html";
@@ -34,7 +35,7 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    response += " An email will be sent to " + escapeHtml(email) + " when the results are ready."; 
 	}
 	SecureShell secureShell = null;
-	String experimentScriptFileName = "experiment.sh";
+	String queue = "production";
 	try {
 	    File tempFile = File.createTempFile("parameters", ".txt");
 	    FileOutputStream stream = new FileOutputStream(tempFile);
@@ -44,7 +45,7 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 		String setting = "set " + name + " " + value + "\n";
 		stream.write(setting.getBytes());
 		if (name.equals("the-maximum-number-of-ticks") && value <= 200) {
-		    experimentScriptFileName = "experiment_dev.sh";
+		    queue = "dev";
 		}
             }
 	    String timeSetting = "set the-start-time \"" + startTime + "\"\n";
@@ -63,7 +64,10 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    for (Entry<String, String> entry: entrySet) {
 		secureShell.uploadFile(entry.getValue(), "/home/donc-onconet/oucs0030/cancer/" + entry.getKey());
 	    }    
-	    String command = "cd ~/cancer/ && bash " + experimentScriptFileName + " " + uuid + " " + numberOfReplicates/16;
+	    String command = "cd ~/cancer/ && bash experiment.sh " + uuid + " " + numberOfReplicates/16 + " " + queue;
+	    if (run3d) {
+		command += " 3d";
+	    }
 	    secureShell.execute(command);
         } catch (IOException e) {
 	    e.printStackTrace();

@@ -44,18 +44,20 @@ public class UploadServlet extends HttpServlet {
 		    //	                String fieldName = item.getFieldName();
 		    //	                String fieldValue = item.getString();
 		    // ... (do your job here)
-		} else {
+		} else if (item.getSize() > 0) {
 		    // Process form file field (input type="file").
 		    String fileName = FilenameUtils.getName(item.getName());
 		    InputStream fileContent = item.getInputStream();
 		    final File tempFile = File.createTempFile(fileName, "");
 		    tempFile.deleteOnExit();
+		    ServletOutputStream writer = response.getOutputStream();
 		    try (FileOutputStream out = new FileOutputStream(tempFile)) {
 			IOUtils.copy(fileContent, out);
 		    } catch (Exception e) {
 			e.printStackTrace();
+			writer.print("Error: " + e.getMessage());
+			return;
 		    }
-		    ServletOutputStream writer = response.getOutputStream();
 		    // add unique tokens around each file name since this will be wrapped up in minimal HTML
 		    writer.print("file-name-token" + fileName + "file-name-token" + tempFile.toString() + "file-name-token");
 		}

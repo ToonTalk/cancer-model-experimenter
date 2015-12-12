@@ -15,6 +15,7 @@ public interface ExperimentServiceAsync {
 	                  ArrayList<String> parameterNames,
 	                  ArrayList<Double> parameterValues,
 	                  HashMap<String, String> serverFiles,
+	                  boolean run3d,
 	                  String host,
 	                  AsyncCallback<String> callback)
 	    throws IllegalArgumentException;

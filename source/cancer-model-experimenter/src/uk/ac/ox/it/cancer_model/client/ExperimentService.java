@@ -17,5 +17,6 @@ public interface ExperimentService extends RemoteService {
 	                    ArrayList<String> parameterNames,
 	                    ArrayList<Double> parameterValues,
 	                    HashMap<String, String> serverFiles,
+	                    boolean run3d,
 	                    String host) throws IllegalArgumentException;
 }
