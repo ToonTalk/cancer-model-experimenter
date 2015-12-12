@@ -37,33 +37,32 @@ public class UploadServlet extends HttpServlet {
            throws ServletException, java.io.IOException {
 	// based on http://stackoverflow.com/questions/2422468/how-to-upload-files-to-server-using-jsp-servlet/2424824#2424824
 	try {
-	        List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-	        for (FileItem item : items) {
-	            if (item.isFormField()) {
-	                // Process regular form field (input type="text|radio|checkbox|etc", select, etc).
-//	                String fieldName = item.getFieldName();
-//	                String fieldValue = item.getString();
-	                // ... (do your job here)
-	            } else {
-	                // Process form file field (input type="file").
-	                String fileName = FilenameUtils.getName(item.getName());
-	                InputStream fileContent = item.getInputStream();
-	                final File tempFile = File.createTempFile(fileName, "");
-	                tempFile.deleteOnExit();
-	                try (FileOutputStream out = new FileOutputStream(tempFile)) {
-	                    IOUtils.copy(fileContent, out);
-	                } catch (Exception e) {
-	                    e.printStackTrace();
-	                }
-	                ServletOutputStream writer = response.getOutputStream();
-	                // add unique tokens around each file name since this will be wrapped up in minimal HTML
-	                writer.print("file-name-token" + fileName + "file-name-token" + tempFile.toString() + "file-name-token");
-	            }
-	        }
-	    } catch (FileUploadException e) {
-	        throw new ServletException("Cannot parse multipart request.", e);
+	    List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+	    for (FileItem item : items) {
+		if (item.isFormField()) {
+		    // Process regular form field (input type="text|radio|checkbox|etc", select, etc).
+		    //	                String fieldName = item.getFieldName();
+		    //	                String fieldValue = item.getString();
+		    // ... (do your job here)
+		} else {
+		    // Process form file field (input type="file").
+		    String fileName = FilenameUtils.getName(item.getName());
+		    InputStream fileContent = item.getInputStream();
+		    final File tempFile = File.createTempFile(fileName, "");
+		    tempFile.deleteOnExit();
+		    try (FileOutputStream out = new FileOutputStream(tempFile)) {
+			IOUtils.copy(fileContent, out);
+		    } catch (Exception e) {
+			e.printStackTrace();
+		    }
+		    ServletOutputStream writer = response.getOutputStream();
+		    // add unique tokens around each file name since this will be wrapped up in minimal HTML
+		    writer.print("file-name-token" + fileName + "file-name-token" + tempFile.toString() + "file-name-token");
+		}
 	    }
-
+	} catch (FileUploadException e) {
+	    throw new ServletException("Cannot parse multipart request.", e);
+	}
     }
 
 }

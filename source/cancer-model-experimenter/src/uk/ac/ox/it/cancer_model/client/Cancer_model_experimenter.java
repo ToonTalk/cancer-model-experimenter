@@ -199,11 +199,11 @@ public class Cancer_model_experimenter implements EntryPoint {
 
 	    // Create a panel to hold all of the form widgets.
 	    VerticalPanel panel = new VerticalPanel();
+	    HorizontalPanel chooseFilePanel = new HorizontalPanel();
 	    form.setWidget(panel);
 	    panel.setSpacing(10);
 
 	    panel.add(new Label("Use this to upload any customisations of the default settings. Any of mutations.txt, input.txt, or regulatoryGraph.html."));
-	    HorizontalPanel chooseFilePanel = new HorizontalPanel();
 	    
 	    // Create a FileUpload widget.
 	    FileUpload upload = new FileUpload();
@@ -212,15 +212,15 @@ public class Cancer_model_experimenter implements EntryPoint {
 
 	    // Add a 'submit' button.
 	    Button submitFileButton = new Button("<b>Submit file</b>", new ClickHandler() {
-	      public void onClick(ClickEvent event) {
-	        form.submit();
-	      }
+		public void onClick(ClickEvent event) {
+		    form.submit();
+		}
 	    });
 	    submitFileButton.setTitle("Click this after choosing one of these files mutations.txt, input.txt, or regulatoryGraph.html");
 	    chooseFilePanel.add(submitFileButton);
-	    
+	    final HTML submittedFileLabel = new HTML("");
+	    chooseFilePanel.add(submittedFileLabel);
 	    panel.add(chooseFilePanel);
-
 	    // Add an event handler to the form.
 	    form.addSubmitHandler(new FormPanel.SubmitHandler() {
 	      public void onSubmit(SubmitEvent event) {
@@ -238,8 +238,8 @@ public class Cancer_model_experimenter implements EntryPoint {
 	        String response = event.getResults();
 	        String[] parts = response.split("file-name-token");
 	        serverFiles.put(parts[1], parts[2]);
+	        submittedFileLabel.setHTML("&nbsp;" + parts[1] + " uploaded.");
 	    }});
-            com.google.gwt.user.client.Element runExperimentPanel = DOM.getElementById("run-experiment-panel");
-            runExperimentPanel.getParentElement().insertBefore(form.getElement(), runExperimentPanel);
+            RootPanel.get("run-experiment-panel").add(form);
 	  }
 }
