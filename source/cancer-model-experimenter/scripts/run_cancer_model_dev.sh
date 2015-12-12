@@ -2,6 +2,7 @@
 
 # $1 is the unique name of the experiment
 # $2 is the number of batches (16 replicates each) to run
+# $3 3d (lower case)  or nothing (for 2D)
 
 # set the number of nodes to 1
 #SBATCH --nodes=1
@@ -9,8 +10,8 @@
 # set number of processes 16 per node
 #SBATCH --ntasks-per-node=16
 
-# set max wall time to 12 hour
-#SBATCH --time=12:00:00
+# set max wall time to 10 minutes (to qualify for developer priority)
+#SBATCH --time=00:09:00
 
 # set the name of the job
 #SBATCH --job-name=cancer_model

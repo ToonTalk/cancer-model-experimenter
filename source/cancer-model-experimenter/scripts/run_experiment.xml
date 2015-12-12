@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE experiments SYSTEM "behaviorspace.dtd">
+<experiments>
+  <experiment name="run-experiment" repetitions="16" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+  </experiment>
+</experiments>

@@ -6,4 +6,5 @@ cd "`dirname "$0"`"             # the copious quoting is for handling paths with
 # -classpath NetLogo.jar        specify main jar
 # org.nlogo.headless.Main       specify we want headless, not GUI
 # "$@"                          pass along any command line arguments
+cd /system/software/linux-x86_64/netlogo/5.2.1/
 java -Dorg.nlogo.is3d=true -Xmx1024m -Dfile.encoding=UTF-8 -classpath NetLogo.jar org.nlogo.headless.Main "$@"

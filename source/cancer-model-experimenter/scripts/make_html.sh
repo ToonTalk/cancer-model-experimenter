@@ -10,9 +10,9 @@ fi
 
 echo "The following contains any errors encountered. " > /tmp/log_preface
 
-if [ -f $1/*/slurm-*.out ] ; then
+# if [ -f $1/*/slurm-*.out ] ; then
    cat /tmp/log_preface $1/*/slurm-*.out > ../cancer-outputs/$1.log ;
-fi
+# fi
 
 rm /tmp/log_preface
 
