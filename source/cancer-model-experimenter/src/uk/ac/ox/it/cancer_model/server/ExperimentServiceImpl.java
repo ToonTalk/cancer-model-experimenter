@@ -52,7 +52,11 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    stream.close();
 	    tempFile.deleteOnExit();
 	    serverFiles.put("parameters.txt", tempFile.toString());
-	    secureShell = new SecureShell();
+	    try  {
+		secureShell = new SecureShell();	
+	    } catch (Exception e) {
+		return "The following error occurred trying to contact the ARC computers: " + e.getMessage();
+	    }
 	    // need to wait until the following finishes before doing the rest
 //	    secureShell.execute("cd ~/cancer/ && bash restore_from_master.sh");
 	    Set<Entry<String, String>> entrySet = serverFiles.entrySet();

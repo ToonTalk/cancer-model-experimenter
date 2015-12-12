@@ -4,6 +4,7 @@
 package uk.ac.ox.it.cancer_model.server;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
@@ -13,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 /**
@@ -28,32 +30,28 @@ public class SecureShell {
     private JSch sshClient;
     
     private Session session;
-    
-    public SecureShell() {
+
+    public SecureShell() throws JSchException, IOException {
 	sshClient = new JSch();
 	// only for public key authentication
-	try {
-//	    sshClient.addIdentity("location to private key file");
-	    session = sshClient.getSession("oucs0030", "arcus-b.arc.ox.ac.uk");
-	    java.util.Properties config=new java.util.Properties();
-	    config.put("StrictHostKeyChecking", "no");
-	    session.setConfig(config);
-            // the source code cannot contain the password so store it locally (for now)
-	    Properties properties = new Properties();
-//	    properties.setProperty("password", "");
-//	    FileOutputStream output = new FileOutputStream("config.properties");
-//	    properties.store(output, null);
-	    FileInputStream input = new FileInputStream("config.properties");
-	    properties.load(input);
-	    String password = properties.getProperty("password");
-	    session.setPassword(password);
-	    session.connect();
-        } catch (Exception e) {
-	    e.printStackTrace();
-        }
+	//	    sshClient.addIdentity("location to private key file");
+	session = sshClient.getSession("oucs0030", "arcus-b.arc.ox.ac.uk");
+	java.util.Properties config=new java.util.Properties();
+	config.put("StrictHostKeyChecking", "no");
+	session.setConfig(config);
+	// the source code cannot contain the password so store it locally (for now)
+	Properties properties = new Properties();
+	//	    properties.setProperty("password", "");
+	//	    FileOutputStream output = new FileOutputStream("config.properties");
+	//	    properties.store(output, null);
+	FileInputStream input = new FileInputStream("config.properties");
+	properties.load(input);
+	String password = properties.getProperty("password");
+	session.setPassword(password);
+	session.connect();
     }
     
-    public void uploadFile(String localPath, String remotePath) {
+    public boolean uploadFile(String localPath, String remotePath) {
 	ChannelSftp sftpChannel = null;
 	try {
 	    sftpChannel = (ChannelSftp) session.openChannel("sftp");
@@ -61,6 +59,7 @@ public class SecureShell {
 	    OutputStream outputStream = sftpChannel.put(remotePath);
 	    FileInputStream fileInputStream = new FileInputStream(localPath);
 	    IOUtils.copy(fileInputStream, outputStream);
+	    return true;
 	} catch (Exception e) {
 	    System.err.println("Trying to copy " + localPath + " to " + remotePath);
 	    e.printStackTrace();
@@ -69,6 +68,7 @@ public class SecureShell {
 		sftpChannel.disconnect();
 	    }
 	}
+	return false;
     }
     
 //    public void downloadFile(String localPath, String remotePath) {

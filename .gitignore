@@ -17,6 +17,9 @@ local.properties
 .loadpath
 
 source/cancer-model-experimenter/gwt-unitCache/
-
+source/cancer-model-experimenter/war/WEB-INF/deploy/
+*.cache.js
 *.rpc
 source/cancer-model-experimenter/war/config.properties
+source/cancer-model-experimenter/war/cancer_model_experimenter/cancer_model_experimenter.devmode.js
+source/cancer-model-experimenter/war/cancer_model_experimenter/compilation-mappings.txt

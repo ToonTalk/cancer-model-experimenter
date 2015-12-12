@@ -40,8 +40,14 @@ public class StaticPageServlet extends HttpServlet {
 	int dotIndex = pathInfo.lastIndexOf(".");
 	String extension = pathInfo.substring(dotIndex + 1);
 	int numberIndex = pathInfo.indexOf("batches-");
-	SecureShell secureShell = new SecureShell();
 	ServletOutputStream outputStream = response.getOutputStream();
+	SecureShell secureShell;
+	try  {
+	    secureShell = new SecureShell();	
+	} catch (Exception e) {
+	    outputStream.print("An error occurred contacting the ARC computers: " + e.getMessage());
+	    return;
+	}
 	if (numberIndex > 0) {
 	    String numberOfBatches = pathInfo.substring(1, numberIndex);
 	    String uuid = pathInfo.substring(numberIndex+"batches-".length(), dotIndex);
@@ -51,7 +57,6 @@ public class StaticPageServlet extends HttpServlet {
 		response.setContentType(PLAIN_CONTENT_TYPE);
 	    }
 	    String remoteFileName = "/home/donc-onconet/oucs0030/cancer-outputs/" + uuid + "." + extension;
-	    
 	    String command = "cd ~/cancer/ && bash make_html.sh " + uuid + " " + numberOfBatches;
 	    secureShell.execute(command);
 	    if (!secureShell.copyRemoteFile(remoteFileName, outputStream) && extension.equals("log")) {
