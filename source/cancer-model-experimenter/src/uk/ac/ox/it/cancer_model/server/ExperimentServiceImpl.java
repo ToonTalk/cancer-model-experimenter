@@ -32,7 +32,9 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	String url = "http://" + host + "/run/" + numberOfReplicates/16 + "batches-" + uuid + ".html";
 	String response = "Click on <a href='" + url + "' target='_blank'>this link</a> to see the results of the experiment.<br>";
 	if (email != null && !email.isEmpty()) {
-	    response += " An email will be sent to " + escapeHtml(email) + " when the results are ready."; 
+	    response += " An email will be sent to " + escapeHtml(email) + " when all the results are ready."; 
+	} else {
+	    email = "none"; // checked by the shell scripts on ARC
 	}
 	SecureShell secureShell = null;
 	String queue = "production";
@@ -58,13 +60,13 @@ public class ExperimentServiceImpl extends RemoteServiceServlet implements
 	    } catch (Exception e) {
 		return "The following error occurred trying to contact the ARC computers: " + e.getMessage();
 	    }
-	    // need to wait until the following finishes before doing the rest
-//	    secureShell.execute("cd ~/cancer/ && bash restore_from_master.sh");
+	    String experimentFolder = "/home/donc-onconet/oucs0030/cancer/" + uuid + "/";
+	    secureShell.execute("cd ~/cancer/ && bash create_experiment_folder.sh " + uuid);
 	    Set<Entry<String, String>> entrySet = serverFiles.entrySet();
 	    for (Entry<String, String> entry: entrySet) {
-		secureShell.uploadFile(entry.getValue(), "/home/donc-onconet/oucs0030/cancer/" + entry.getKey());
+		secureShell.uploadFile(entry.getValue(), experimentFolder + entry.getKey());
 	    }    
-	    String command = "cd ~/cancer/ && bash experiment.sh " + uuid + " " + numberOfReplicates/16 + " " + queue;
+	    String command = "cd ~/cancer/ && bash experiment.sh " + uuid + " " + numberOfReplicates/16 + " " + queue + " " + email;
 	    if (run3d) {
 		command += " 3d";
 	    }

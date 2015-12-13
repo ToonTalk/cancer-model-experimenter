@@ -128,7 +128,7 @@ public class Cancer_model_experimenter implements EntryPoint {
 	     */
 	    private void sendParametersToServer() {
 		errorLabel.setText("");
-		String emailAddress = emailField.getText();
+		String emailAddress = emailField.getText().trim();
 		ArrayList<String> parameterNames = new ArrayList<String>();
 		NodeList<Element> sliders = RootPanel.getBodyElement().getElementsByTagName("input");
 		long numberOfReplicates = 16;
