@@ -5,32 +5,35 @@
 # $2 is the number of batches (16 replicates each) to run
 
 if [ ! -f ../cancer-outputs/$1.html ] ; then
-   cat prefix.html postfix.html > ../cancer-outputs/$1.html ;
+   cat prefix.html postfix.html > ../cancer-outputs/$1.html
 fi
 
-echo "The following contains any errors encountered. " > /tmp/log_preface
+log_count=$(ls $1/*/slurm-*.out | wc -l)
 
-# if [ -f $1/*/slurm-*.out ] ; then
-   cat /tmp/log_preface $1/*/slurm-*.out > ../cancer-outputs/$1.log ;
-# fi
+if [ $log_count -gt 0 ] ; then
+  echo "The following contains errors encountered (if any). " > /tmp/log_preface
+  cat /tmp/log_preface $1/*/slurm-*.out > ../cancer-outputs/$1.log
+  rm /tmp/log_preface
+else
+  echo "Job is still in the ARC job queue. Try again later." > ../cancer-outputs/$1.log
+fi
 
-rm /tmp/log_preface
+count=$(ls $1/*/16_runs.txt | wc -l)
 
-if [ ! -f $1/*/16_runs.txt ] ; then
-   exit 0 ;
+if [ $count == 0 ] ; then
+   # too early not results ready yet
+   exit 0 
 fi
 
 cat prefix.html $1/*/16_runs.txt postfix.html > ../cancer-outputs/$1.html
 
-count=$(ls $1/*/16_runs.txt | wc -l)
-
 #if last one then delete temporary files
 
 if [ $count -eq $2 ] ; then 
-   rm -R $1 ; 
+   # delete the runs now so this only is called once
+   rm $1/*/16_runs.txt
+   # and schedule the full clean up since a script can't remove itself without errors
+   cd temp
+   sbatch --partition=devel clean_up_$1.sh $1
+   cd ..
 fi
-
-
-
-
-

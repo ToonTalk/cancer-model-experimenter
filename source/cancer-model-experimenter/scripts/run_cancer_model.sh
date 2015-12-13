@@ -15,6 +15,13 @@
 # set the name of the job
 #SBATCH --job-name=cancer_model
 
+# mail alerts when task finishes
+#SBATCH --mail-type=END
+
+# send mail to the following address
+
+#SBATCH --mail-user=none
+
 # start job from the directory it was submitted
 cd $SLURM_SUBMIT_DIR
 
