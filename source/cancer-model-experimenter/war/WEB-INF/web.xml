@@ -28,7 +28,7 @@
 
 <servlet-mapping>
    <servlet-name>UploadServlet</servlet-name>
-   <url-pattern>/cancer_model_experimenter//uploadFileHandler</url-pattern>
+   <url-pattern>/cancer_model_experimenter/uploadFileHandler</url-pattern>
 </servlet-mapping>
 
 <servlet>

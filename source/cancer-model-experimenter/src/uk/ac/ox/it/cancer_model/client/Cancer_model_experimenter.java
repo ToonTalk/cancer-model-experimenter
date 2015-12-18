@@ -193,7 +193,7 @@ public class Cancer_model_experimenter implements EntryPoint {
 	// Create a FormPanel and point it at a service.
 	// based on http://www.gwtproject.org/javadoc/latest/com/google/gwt/user/client/ui/FileUpload.html
 	final FormPanel form = new FormPanel();
-	form.setAction(GWT.getModuleBaseURL() + "/uploadFileHandler");
+	form.setAction(GWT.getModuleBaseURL() + "uploadFileHandler");
 
 	// Because we're going to add a FileUpload widget, we'll need to set the
 	// form to use the POST method, and multipart MIME encoding.
