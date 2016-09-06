@@ -11,7 +11,7 @@ fi
 log_count=$(ls $1/*/slurm-*.out | wc -l)
 
 if [ $log_count -gt 0 ] ; then
-  echo "The following contains errors encountered (if any). " > /tmp/log_preface
+  echo "The following contains errors encountered (or is blank if no errors have been encountered so far). " > /tmp/log_preface
   cat /tmp/log_preface $1/*/slurm-*.out > ../cancer-outputs/$1.log
   rm /tmp/log_preface
 else
